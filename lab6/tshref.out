@@ -1,0 +1,327 @@
+./sdriver.pl -t trace01.txt -s ./tsh -a "-p"
+#
+# trace01.txt - Properly terminate on EOF.
+#
+./sdriver.pl -t trace02.txt -s ./tsh -a "-p"
+#
+# trace02.txt - Process builtin quit command.
+#
+./sdriver.pl -t trace03.txt -s ./tsh -a "-p"
+#
+# trace03.txt - Run a foreground job.
+#
+tsh> quit
+./sdriver.pl -t trace04.txt -s ./tsh -a "-p"
+#
+# trace04.txt - Run a background job.
+#
+tsh> ./myspin 1 &
+[1] (21797) ./myspin 1 &
+./sdriver.pl -t trace05.txt -s ./tsh -a "-p"
+#
+# trace05.txt - Process jobs builtin command.
+#
+tsh> ./myspin 2 &
+[1] (21801) ./myspin 2 &
+tsh> ./myspin 3 &
+[2] (21803) ./myspin 3 &
+tsh> jobs
+[1] (21801) Running    ./myspin 2 &
+[2] (21803) Running    ./myspin 3 &
+./sdriver.pl -t trace06.txt -s ./tsh -a "-p"
+#
+# trace06.txt - Forward SIGINT to foreground job.
+#
+tsh> ./myspin 4
+Job [1] (21808) terminated by signal 2
+./sdriver.pl -t trace07.txt -s ./tsh -a "-p"
+#
+# trace07.txt - Forward SIGINT only to foreground job.
+#
+tsh> ./myspin 4 &
+[1] (21812) ./myspin 4 &
+tsh> ./myspin 5
+Job [2] (21814) terminated by signal 2
+tsh> jobs
+[1] (21812) Running    ./myspin 4 &
+./sdriver.pl -t trace08.txt -s ./tsh -a "-p"
+#
+# trace08.txt - Forward SIGTSTP only to foreground job.
+#
+tsh> ./myspin 4 &
+[1] (21819) ./myspin 4 &
+tsh> ./myspin 5
+Job [2] (21821) stopped by signal 20
+tsh> jobs
+[1] (21819) Running    ./myspin 4 &
+[2] (21821) Stopped    ./myspin 5 
+./sdriver.pl -t trace09.txt -s ./tsh -a "-p"
+#
+# trace09.txt - Process bg builtin command
+#
+tsh> ./myspin 4 &
+[1] (21826) ./myspin 4 &
+tsh> ./myspin 5
+Job [2] (21828) stopped by signal 20
+tsh> jobs
+[1] (21826) Running    ./myspin 4 &
+[2] (21828) Stopped    ./myspin 5 
+tsh> bg %2
+[2] (21828) ./myspin 5 
+tsh> jobs
+[1] (21826) Running    ./myspin 4 &
+[2] (21828) Running    ./myspin 5 
+./sdriver.pl -t trace10.txt -s ./tsh -a "-p"
+#
+# trace10.txt - Process fg builtin command. 
+#
+tsh> ./myspin 4 &
+[1] (21835) ./myspin 4 &
+tsh> fg %1
+Job [1] (21835) stopped by signal 20
+tsh> jobs
+[1] (21835) Stopped    ./myspin 4 &
+tsh> fg %1
+tsh> jobs
+./sdriver.pl -t trace11.txt -s ./tsh -a "-p"
+#
+# trace11.txt - Forward SIGINT to every process in foreground process group
+#
+tsh> ./mysplit 4
+Job [1] (21843) terminated by signal 2
+tsh> /bin/ps a
+  PID TTY      STAT   TIME COMMAND
+21268 pts/1    S      0:00 -tcsh
+21298 pts/1    S      0:00 emacs tsh.c
+21300 pts/1    S      0:00 emacs tshpipe.c
+21784 pts/1    S      0:00 make tshref.out
+21785 pts/1    S      0:00 /bin/sh -c make tests > tshref.out 2>&1
+21786 pts/1    S      0:00 make tests
+21840 pts/1    S      0:00 perl ./sdriver.pl -t trace11.txt -s ./tsh -a -p
+21841 pts/1    S      0:00 ./tsh -p
+21846 pts/1    R      0:00 /bin/ps a
+./sdriver.pl -t trace12.txt -s ./tsh -a "-p"
+#
+# trace12.txt - Forward SIGTSTP to every process in foreground process group
+#
+tsh> ./mysplit 4
+Job [1] (21850) stopped by signal 20
+tsh> jobs
+[1] (21850) Stopped    ./mysplit 4 
+tsh> /bin/ps a
+  PID TTY      STAT   TIME COMMAND
+21268 pts/1    S      0:00 -tcsh
+21298 pts/1    S      0:00 emacs tsh.c
+21300 pts/1    S      0:00 emacs tshpipe.c
+21784 pts/1    S      0:00 make tshref.out
+21785 pts/1    S      0:00 /bin/sh -c make tests > tshref.out 2>&1
+21786 pts/1    S      0:00 make tests
+21847 pts/1    S      0:00 perl ./sdriver.pl -t trace12.txt -s ./tsh -a -p
+21848 pts/1    S      0:00 ./tsh -p
+21850 pts/1    T      0:00 ./mysplit 4
+21851 pts/1    T      0:00 ./mysplit 4
+21854 pts/1    R      0:00 /bin/ps a
+./sdriver.pl -t trace13.txt -s ./tsh -a "-p"
+#
+# trace13.txt - Restart every stopped process in process group
+#
+tsh> ./mysplit 4
+Job [1] (21858) stopped by signal 20
+tsh> jobs
+[1] (21858) Stopped    ./mysplit 4 
+tsh> /bin/ps a
+  PID TTY      STAT   TIME COMMAND
+21268 pts/1    S      0:00 -tcsh
+21298 pts/1    S      0:00 emacs tsh.c
+21300 pts/1    S      0:00 emacs tshpipe.c
+21784 pts/1    S      0:00 make tshref.out
+21785 pts/1    S      0:00 /bin/sh -c make tests > tshref.out 2>&1
+21786 pts/1    S      0:00 make tests
+21855 pts/1    S      0:00 perl ./sdriver.pl -t trace13.txt -s ./tsh -a -p
+21856 pts/1    S      0:00 ./tsh -p
+21858 pts/1    T      0:00 ./mysplit 4
+21859 pts/1    T      0:00 ./mysplit 4
+21862 pts/1    R      0:00 /bin/ps a
+tsh> fg %1
+tsh> /bin/ps a
+  PID TTY      STAT   TIME COMMAND
+21268 pts/1    S      0:00 -tcsh
+21298 pts/1    S      0:00 emacs tsh.c
+21300 pts/1    S      0:00 emacs tshpipe.c
+21784 pts/1    S      0:00 make tshref.out
+21785 pts/1    S      0:00 /bin/sh -c make tests > tshref.out 2>&1
+21786 pts/1    S      0:00 make tests
+21855 pts/1    S      0:00 perl ./sdriver.pl -t trace13.txt -s ./tsh -a -p
+21856 pts/1    S      0:00 ./tsh -p
+21865 pts/1    R      0:00 /bin/ps a
+./sdriver.pl -t trace14.txt -s ./tsh -a "-p"
+#
+# trace14.txt - Simple error handling
+#
+tsh> ./bogus
+./bogus: Command not found
+tsh> ./myspin 4 &
+[1] (21871) ./myspin 4 &
+tsh> fg
+fg command requires PID or %jobid argument
+tsh> bg
+bg command requires PID or %jobid argument
+tsh> fg a
+fg: argument must be a PID or %jobid
+tsh> bg a
+bg: argument must be a PID or %jobid
+tsh> fg 9999999
+(9999999): No such process
+tsh> bg 9999999
+(9999999): No such process
+tsh> fg %2
+%2: No such job
+tsh> fg %1
+Job [1] (21871) stopped by signal 20
+tsh> bg %2
+%2: No such job
+tsh> bg %1
+[1] (21871) ./myspin 4 &
+tsh> jobs
+[1] (21871) Running    ./myspin 4 &
+./sdriver.pl -t trace15.txt -s ./tsh -a "-p"
+#
+# trace15.txt - Putting it all together
+#
+tsh> ./bogus
+./bogus: Command not found
+tsh> ./myspin 10
+Job [1] (21888) terminated by signal 2
+tsh> ./myspin 3 &
+[1] (21890) ./myspin 3 &
+tsh> ./myspin 4 &
+[2] (21892) ./myspin 4 &
+tsh> jobs
+[1] (21890) Running    ./myspin 3 &
+[2] (21892) Running    ./myspin 4 &
+tsh> fg %1
+Job [1] (21890) stopped by signal 20
+tsh> jobs
+[1] (21890) Stopped    ./myspin 3 &
+[2] (21892) Running    ./myspin 4 &
+tsh> bg %3
+%3: No such job
+tsh> bg %1
+[1] (21890) ./myspin 3 &
+tsh> jobs
+[1] (21890) Running    ./myspin 3 &
+[2] (21892) Running    ./myspin 4 &
+tsh> fg %1
+tsh> quit
+./sdriver.pl -t trace16.txt -s ./tsh -a "-p"
+#
+# trace16.txt - Tests whether the shell can handle SIGTSTP and SIGINT
+#     signals that come from other processes instead of the terminal.
+#
+tsh> ./mystop 2
+Job [1] (21904) stopped by signal 20
+tsh> jobs
+[1] (21904) Stopped    ./mystop 2
+tsh> ./myint 2
+Job [2] (21907) terminated by signal 2
+./sdriver.pl -t trace17.txt -s ./tsh -a "-p"
+#
+# trace17.txt - Properly handle Input and Output Redirection.
+#
+tsh> ./myrw < myinput
+Input!!!!!!!!!!
+tsh> /bin/touch myoutput
+tsh> /bin/rm myoutput
+tsh> /bin/ps > myoutput
+tsh> /bin/cat myoutput
+  PID TTY          TIME CMD
+21268 pts/1    00:00:00 tcsh
+21298 pts/1    00:00:00 emacs
+21300 pts/1    00:00:00 emacs
+21784 pts/1    00:00:00 make
+21785 pts/1    00:00:00 sh
+21786 pts/1    00:00:00 make
+21908 pts/1    00:00:00 sdriver.pl
+21909 pts/1    00:00:00 tsh
+21917 pts/1    00:00:00 ps
+tsh> /bin/rm myoutput
+tsh> /bin/ps
+  PID TTY          TIME CMD
+21268 pts/1    00:00:00 tcsh
+21298 pts/1    00:00:00 emacs
+21300 pts/1    00:00:00 emacs
+21784 pts/1    00:00:00 make
+21785 pts/1    00:00:00 sh
+21786 pts/1    00:00:00 make
+21908 pts/1    00:00:00 sdriver.pl
+21909 pts/1    00:00:00 tsh
+21923 pts/1    00:00:00 ps
+tsh> quit
+./sdriver.pl -t trace18.txt -s ./tsh -a "-p"
+#
+# trace18.txt - Properly handle Input and Output Redirection
+#	      simultaneously.
+#
+tsh> /bin/touch myoutput
+tsh> /bin/rm myoutput
+tsh> ./myrw < myinput > myoutput
+tsh> /bin/cat myoutput
+Input!!!!!!!!!!
+tsh> /bin/rm myoutput
+tsh> ./myrw > myoutput < myinput
+tsh> /bin/cat myoutput
+Input!!!!!!!!!!
+tsh> /bin/rm myoutput
+tsh> quit
+./sdriver.pl -t trace19.txt -s ./tsh -a "-p"
+#
+# trace19.txt - Properly handle Input and Output Redirection
+#	      errors.
+#
+tsh> /bin/touch myoutput
+tsh> /bin/rm myoutput
+tsh> ./myrw < myinput < myoutput
+Error: Ambiguous I/O redirection
+tsh> ./myrw < myoutput
+Error: myoutput No such file or directory
+tsh> quit
+./sdriver.pl -t trace20.txt -s ./tsh -a "-p"
+#
+# trace20.txt - Putting it all together, yet again
+#
+tsh> ./bogus
+./bogus: Command not found
+tsh> ./myspin 10
+Job [1] (21958) terminated by signal 2
+tsh> ./myspin 3 &
+[1] (21960) ./myspin 3 &
+tsh> ./myspin 4 &
+[2] (21962) ./myspin 4 &
+tsh> jobs
+[1] (21960) Running    ./myspin 3 &
+[2] (21962) Running    ./myspin 4 &
+tsh> fg %1
+Job [1] (21960) stopped by signal 20
+tsh> jobs
+[1] (21960) Stopped    ./myspin 3 &
+[2] (21962) Running    ./myspin 4 &
+tsh> bg %3
+%3: No such job
+tsh> bg %1
+[1] (21960) ./myspin 3 &
+tsh> jobs
+[1] (21960) Running    ./myspin 3 &
+[2] (21962) Running    ./myspin 4 &
+tsh> fg %1
+tsh> /bin/touch myoutput
+tsh> /bin/rm myoutput
+tsh> ./myrw < myinput > myoutput
+tsh> /bin/cat myoutput
+Input!!!!!!!!!!
+tsh> /bin/rm myoutput
+tsh> ./myrw > myoutput < myinput
+tsh> /bin/cat myoutput
+Input!!!!!!!!!!
+tsh> /bin/rm myoutput
+tsh> quit
+

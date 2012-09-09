@@ -1,0 +1,20 @@
+all-in-one sidebar
+autoproxy
+coral IE tab
+echofon
+firebug
+fireftp
+flashgot
+greasefire
+greasemonkey
+nightly tester tools
+organize status bar
+quick drag
+screengrab
+search status
+tab mix plus
+toolbar buttons
+color zilla
+web developer
+world ip
+live http header

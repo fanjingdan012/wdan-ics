@@ -1,0 +1,34 @@
+My Student ID:	09302010035
+My Name:		Wu Yanhong
+
+1.Have finished all the parts include logging files, cache, changing port,and
+multiple requests.Furthermore, the POST and other methods also be implemented.
+
+2.To change the port, just input the port number when the proxy is running.
+
+3.The web cache is saved in the memory, it has 200 blocks,each block can hold
+at most 100K data. Each block saves the request's url,time stamp and entity.
+When a request is received, Hash the url to get the index of the cache and check
+it. Then get the server's response.If the block's url and the time stamp are 
+same to the request. Then regard it as a cache hit. Otherwise, save the request
+into the cache if the entity of the response entity is no larger than 100K.
+
+4.I use multiple threads to handle mutiple requests. When a new request is 
+received. Create a new thread and detach it. I also use the rwlock to ensure the
+thread secure.
+
+5.I check the request head's attributes. Delete the 'Keep-Alive' attribute to
+make sure the connection can be closed. Also, I permit the open client funciton 
+and the Rio_writen function to try more than 1 time.
+
+6.Few websites can't be visited by this proxy. Because it checks to many things,
+the speed may be a little slow.
+
+bbs.fudan.edu.cn
+www.google.com
+www.baidu.com
+www.renren.com
+www.youku.com
+www.sina.com.cn
+etc.
+

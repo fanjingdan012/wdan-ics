@@ -1,0 +1,43 @@
+# My student ID is 09302010035.
+# My name is Wu Yanhong.
+	.pos 0
+init:	irmovl Stack, %esp
+	irmovl Stack, %ebp
+	jmp Main
+	.align 4
+ele1:
+	.long 0x00a
+	.long ele2
+ele2:
+	.long 0x0b0
+	.long ele3
+ele3:
+	.long 0xc00
+	.long 0
+Main:	
+	irmovl ele1,%eax
+	pushl %eax
+	call Sum
+	halt
+Sum:
+	pushl %ebp
+	rrmovl %esp,%ebp
+	irmovl $0,%edx
+	jmp Loope
+Loop:
+	mrmovl 8(%ebp),%eax
+	mrmovl (%eax),%eax
+	addl %eax,%edx
+	mrmovl 8(%ebp),%eax
+	mrmovl 4(%eax),%eax
+	rmmovl %eax,8(%ebp)
+Loope: 	
+	mrmovl 8(%ebp),%ecx	
+	andl %ecx,%ecx
+	jne Loop
+	rrmovl %edx,%eax
+	popl %ebp
+	ret
+	.pos 0x200
+Stack:
+	

@@ -1,0 +1,33 @@
+#####################################################################
+# ICS Lab7: Malloc Lab
+# Test Harness
+#
+# Copyright (c) 2002, R. Bryant and D. O'Hallaron, All rights reserved.
+# May not be used, modified, or copied without permission.
+#
+######################################################################
+
+Files:
+======
+Makefile	Builds the test harness
+README		This file
+mm.c@		Your solution malloc package
+mm.h		
+mtest*		The test harness binary and source file
+mtest.c
+traces/		Trace files
+
+
+Support Files for Test Harness:
+===============================
+clock.c		Routines for accessing the Pentium and Alpha cycle counters
+clock.h
+config.h	Configures the malloc lab test harness
+fcyc.c		Timer functions based on cycle counters
+fcyc.h
+fsecs.c		Wrapper function for the different timer packages
+fsecs.h
+ftimer.c	Timer functions based on interval timers and gettimeofday()
+ftimer.h
+memlib.c	Models the heap and sbrk function
+memlib.h

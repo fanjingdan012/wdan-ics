@@ -1,0 +1,31 @@
+#
+# trace18.txt - Properly handle Input and Output Redirection
+#	      simultaneously.
+#
+
+/bin/echo -e tsh\076 /bin/touch myoutput
+/bin/touch myoutput
+
+/bin/echo -e tsh\076 /bin/rm myoutput
+/bin/rm myoutput
+
+/bin/echo -e tsh\076 ./myrw \074 myinput \076 myoutput
+./myrw < myinput > myoutput
+
+/bin/echo -e tsh\076 /bin/cat myoutput
+/bin/cat myoutput
+
+/bin/echo -e tsh\076 /bin/rm myoutput
+/bin/rm myoutput
+
+/bin/echo -e tsh\076 ./myrw \076 myoutput \074 myinput
+./myrw > myoutput < myinput
+
+/bin/echo -e tsh\076 /bin/cat myoutput
+/bin/cat myoutput
+
+/bin/echo -e tsh\076 /bin/rm myoutput
+/bin/rm myoutput
+
+/bin/echo -e tsh\076 quit
+quit
